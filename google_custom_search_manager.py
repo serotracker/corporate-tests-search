@@ -21,8 +21,6 @@ def _get_search_results_for_company(company, engine_id, search_engine, **kwargs)
     params = dict(q=query, cx=engine_id, **kwargs)
     response = search_engine.cse().list(**params).execute()
     search_results = response['items']
-    print(search_results)
-    exit()
     return search_results
 
 
