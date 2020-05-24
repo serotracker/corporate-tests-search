@@ -1,4 +1,5 @@
 import os
+import re
 
 import pandas as pd
 
@@ -40,6 +41,9 @@ def _get_formatted_record_from_results(result, company):
     # Extract title
     title = metatags.get('og:title', result['title'])
 
+    # Extract text preview
+    text_preview = result.get('snippet', 'Not Available')
+
     # Extract published date
     try:
         published_date = metatags['article:published_time']
@@ -50,10 +54,12 @@ def _get_formatted_record_from_results(result, company):
             try:
                 published_date = metatags['date']
             except KeyError:
-                published_date = 'Not Available'
-
-    # Extract text preview
-    text_preview = result.get('snippet', 'Not Available')
+                regex = r"\b[A-Z][a-z]{2}\s[0-9]{1,2},\s[0-9]{4}"
+                result = re.search(regex, text_preview)
+                if result is not None:
+                    published_date = result.group()
+                else:
+                    published_date = 'Not Available'
 
     # Create dictionary of data for row in df
     data = {'COMPANY_NAME': company,
@@ -61,8 +67,8 @@ def _get_formatted_record_from_results(result, company):
             'SITE_NAME': site_name,
             'URL': url,
             'TITLE': title,
-            'PUBLISHED_DATE': published_date,
-            'TEXT_PREVIEW': text_preview}
+            'TEXT_PREVIEW': text_preview,
+            'PUBLISHED_DATE': published_date}
     return data
 
 
