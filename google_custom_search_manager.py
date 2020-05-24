@@ -1,5 +1,6 @@
 import os
 import re
+from datetime import datetime
 
 import pandas as pd
 
@@ -57,7 +58,7 @@ def _get_formatted_record_from_results(result, company):
                 regex = r"\b[A-Z][a-z]{2}\s[0-9]{1,2},\s[0-9]{4}"
                 result = re.search(regex, text_preview)
                 if result is not None:
-                    published_date = result.group()
+                    published_date = datetime.strptime(result.group(), '%b %d, %Y')
                 else:
                     published_date = 'Not Available'
 
@@ -91,7 +92,7 @@ def run_search_across_companies(company_names, search_engine):
                                             sort=sort_by_date, exactTerms=company)
         # Loop through result and extract each into a row of the final results df for the company
         for result in results_for_company:
-            # Extract relevant information from result into nicely formatted recrdo
+            # Extract relevant information from result into nicely formatted record
             formatted_record = _get_formatted_record_from_results(result, company)
 
             # Add formatted record to over list of records
