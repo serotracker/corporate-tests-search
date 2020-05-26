@@ -1,3 +1,4 @@
+import os
 from datetime import datetime
 
 import pandas as pd
@@ -15,7 +16,7 @@ def _create_dummy_input_csv():
 
 def main():
     # Create dummy input csv
-    _create_dummy_input_csv()
+    #_create_dummy_input_csv()
 
     # Get custom search engine instance
     custom_search = create_search_engine()
@@ -29,18 +30,16 @@ def main():
     date_retrieved = datetime.now()
     date_retrieved_day = date_retrieved.day
     date_retrieved_month = date_retrieved.month
-    date_retrieved_year = date_retrieved.year
     results_df['DATE_RETRIVED'] = date_retrieved
 
     # Create csv name based on date
-    csv_name = '{}-{}-{} corporate search results.csv'.format(date_retrieved_year,
-                                                              date_retrieved_month,
-                                                              date_retrieved_day)
+    csv_name = '{}-{}_{}_outputsheet.csv'.format(date_retrieved_month, date_retrieved_day, 'inputCSVName')
     results_df.to_csv(csv_name, index=False)
 
     # Create google services manager obj to control uploading csvs to Google Drive
     google = GoogleServicesManager()
     google.upload_file_to_drive(csv_name)
+    os.remove(csv_name)
     return
 
 

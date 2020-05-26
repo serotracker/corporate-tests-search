@@ -1,7 +1,7 @@
 from pydrive.auth import GoogleAuth
 from pydrive.drive import GoogleDrive
 
-OUTPUT_FOLDER_ID = '1tWfAlHJfW3uiyDJFz__BMyLsLJ927hQL'
+OUTPUT_FOLDER_ID = '1X6E0jMigQCSll0rxIlKFWdZ7b-FTNH9z'
 
 
 class GoogleServicesManager():
