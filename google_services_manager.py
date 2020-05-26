@@ -46,10 +46,12 @@ class GoogleServicesManager():
 
     def download_file_from_drive(self, file_id):
         try:
+            group = os.getenv('SEARCH_GROUP')
+            file_id = input_file_id[group]
             file = self.drive_client.CreateFile({'id': file_id})
-            csv_name = file['title']
-            file.GetContentFile('{}.csv'.format(csv_name), mimetype='text/csv')
-            return csv_name
+            file_name = '{}.csv'.format(file['title'])
+            file.GetContentFile(file_name, mimetype='text/csv')
+            return file_name
         except Exception as e:
             print(e)
             return
