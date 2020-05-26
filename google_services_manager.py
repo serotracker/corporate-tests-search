@@ -1,7 +1,11 @@
 from pydrive.auth import GoogleAuth
 from pydrive.drive import GoogleDrive
 
-OUTPUT_FOLDER_ID = '1tWfAlHJfW3uiyDJFz__BMyLsLJ927hQL'
+A_FILE_ID = '1hIxFbICy_1mjlhcpvce8ULWaEkm3EkjKly59Q76woaI'
+B_FILE_ID = '1lbn2JXymi_1d_cPy424qFHLaspqzYpANU4kcArBdRjw'
+C_FILE_ID = '1nJqAGw9P9ipu8GPBNB3ow-gAGleQtM2_65mGgjBvb0U'
+INPUT_FOLDER_ID = '1YrbIxvOzuU6jkwlOCAJAwCSsauxd03Au'
+OUTPUT_FOLDER_ID = '1X6E0jMigQCSll0rxIlKFWdZ7b-FTNH9z'
 
 
 class GoogleServicesManager():
@@ -34,3 +38,14 @@ class GoogleServicesManager():
             file.Upload()
         except Exception as e:
             print(e)
+
+    def download_file_from_drive(self):
+        mimetypes = {
+            # Drive Sheets files as MS Excel files.
+            'application/vnd.google-apps.spreadsheet':
+                'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+        }
+        file = self.drive_client.CreateFile({'id': A_FILE_ID})
+        # print('title: %s, id: %s, mimeType: %s' % (file['title'], file['id'], file['mimeType']))
+        # download_mimetype = mimetypes[file['mimeType']]
+        file.GetContentFile(file['title'])

@@ -1,4 +1,5 @@
 from datetime import datetime
+import os
 
 import pandas as pd
 
@@ -15,7 +16,7 @@ def _create_dummy_input_csv():
 
 def main():
     # Create dummy input csv
-    _create_dummy_input_csv()
+    #_create_dummy_input_csv()
 
     # Get custom search engine instance
     custom_search = create_search_engine()
@@ -41,6 +42,9 @@ def main():
     # Create google services manager obj to control uploading csvs to Google Drive
     google = GoogleServicesManager()
     google.upload_file_to_drive(csv_name)
+
+    # Delete local csv file of results
+    os.remove(csv_name)
     return
 
 
