@@ -7,16 +7,14 @@ from google_services_manager import GoogleServicesManager
 from google_custom_search_manager import create_search_engine, run_search_across_companies
 
 
-def _create_dummy_input_csv():
-    input_df = pd.DataFrame(columns=['COMPANY_NAME'])
-    input_df['COMPANY_NAME'] = ['Tesla', 'Ford', 'Canadian Tire']
-    input_df.to_csv("Dummy test.csv", index=False)
-    return
-
-
 def main():
-    # Create dummy input csv
-    #_create_dummy_input_csv()
+    # Read CSV file with list of companies from drive
+    google = GoogleServicesManager()
+    file_id = os.getenv('SEARCH_GROUP')
+    file_name = google.download_file_from_drive(file_id)
+    df = pd.read_csv('{}.csv'.format(file_name))
+    print(df)
+    exit()
 
     # Get custom search engine instance
     custom_search = create_search_engine()
