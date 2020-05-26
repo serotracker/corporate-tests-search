@@ -1,10 +1,16 @@
 import os
 import re
 from datetime import datetime
+from enum import Enum
 
 import pandas as pd
 
 from googleapiclient.discovery import build
+
+
+class Query(Enum):
+    ANTIBODY_BLOOD_TEST = 'orders antibody blood tests for employees'
+    CONDUCT_COVID_TEST = 'conducting COVID tests on employees'
 
 
 def create_search_engine():
@@ -17,7 +23,7 @@ def create_search_engine():
     return custom_search
 
 
-def _get_search_results_for_company(company, engine_id, search_engine, **kwargs):
+def _get_search_results_for_company(company, engine_id, search_engine, query, **kwargs):
     # Submit API request and extract search results from total response
     query = '{} orders antibody tests for employees'.format(company)
     params = dict(q=query, cx=engine_id, **kwargs)
@@ -32,9 +38,6 @@ def _get_formatted_record_from_results(result, company):
 
     # Extract source type
     source_type = metatags.get('og:type', 'Not Available')
-
-    # Extract site name
-    site_name = metatags.get('og:site_name', 'Not Available')
 
     # Extract URL
     url = metatags.get('og:url', result['link'])
@@ -65,7 +68,6 @@ def _get_formatted_record_from_results(result, company):
     # Create dictionary of data for row in df
     data = {'COMPANY_NAME': company,
             'SOURCE_TYPE': source_type,
-            'SITE_NAME': site_name,
             'URL': url,
             'TITLE': title,
             'TEXT_PREVIEW': text_preview,
@@ -86,16 +88,20 @@ def run_search_across_companies(company_names, search_engine):
     # Loop through companies and create results output for each company
     results_list = []
     for company in company_names:
-        # Get all results for specific company search
-        results_for_company =\
-            _get_search_results_for_company(company, search_engine_id, search_engine,
-                                            sort=sort_by_date, exactTerms=company)
-        # Loop through result and extract each into a row of the final results df for the company
-        for result in results_for_company:
-            # Extract relevant information from result into nicely formatted record
-            formatted_record = _get_formatted_record_from_results(result, company)
+        # Loop through the two search queries that must be run for each company
+        for query in Query:
+            full_query = '{} {}'.format(company, query.value)
+            # Get all results for specific company search
+            results_for_company =\
+                _get_search_results_for_company(company, search_engine_id, search_engine,
+                                                sort=sort_by_date, exactTerms=company, num=5,
+                                                query=full_query)
+            # Loop through result and extract each into a row of the final results df for the company
+            for result in results_for_company:
+                # Extract relevant information from result into nicely formatted record
+                formatted_record = _get_formatted_record_from_results(result, company)
 
-            # Add formatted record to over list of records
-            results_list.append(formatted_record)
+                # Add formatted record to over list of records
+                results_list.append(formatted_record)
     results_df = pd.DataFrame(results_list)
     return results_df
