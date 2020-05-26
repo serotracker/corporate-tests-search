@@ -71,6 +71,8 @@ def _get_formatted_record_from_results(result, company):
             'URL': url,
             'TITLE': title,
             'TEXT_PREVIEW': text_preview,
+            'LOOKED_AT_TEXT_PREVIEW': 0,
+            'OPENED_ARTICLE': 0,
             'PUBLISHED_DATE': published_date}
     return data
 
