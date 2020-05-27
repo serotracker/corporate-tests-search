@@ -2,3 +2,5 @@ client_secrets.json
 credentials.txt
 .idea/*
 venv/
+
+__pycache__/
