@@ -33,7 +33,6 @@ def _get_search_results_for_company(company, engine_id, search_engine, query, **
         return search_results
     except KeyError:
         print('No results for company {}'.format(company))
-        print(response)
         return
 
 
@@ -43,7 +42,7 @@ def _get_formatted_record_from_results(result, company):
         metatags = result['pagemap']['metatags'][0]
 
         # Extract source type
-        source_type = metatags.get('og:type', 'Not Available')
+        source_type = metatags.get('og:type', 'N/A')
 
         # Extract URL
         url = metatags.get('og:url', result['link'])
@@ -52,7 +51,7 @@ def _get_formatted_record_from_results(result, company):
         title = metatags.get('og:title', result['title'])
 
         # Extract text preview
-        text_preview = result.get('snippet', 'Not Available')
+        text_preview = result.get('snippet', 'N/A')
 
         # Extract published date
         try:
@@ -69,7 +68,7 @@ def _get_formatted_record_from_results(result, company):
                     if result is not None:
                         published_date = datetime.strptime(result.group(), '%b %d, %Y')
                     else:
-                        published_date = 'Not Available'
+                        published_date = 'N/A'
 
         # Create dictionary of data for row in df
         data = {'COMPANY_NAME': company,
@@ -82,26 +81,35 @@ def _get_formatted_record_from_results(result, company):
                 'PUBLISHED_DATE': published_date}
     except KeyError:
         try:
-            print(company)
-            print(result)
             data = {'COMPANY_NAME': company,
-                    'SOURCE_TYPE': 'Not Available',
+                    'SOURCE_TYPE': 'N/A',
                     'URL': result['link'],
                     'TITLE': result['title'],
                     'TEXT_PREVIEW': result['snippet'],
                     'LOOKED_AT_TEXT_PREVIEW': 0,
                     'OPENED_ARTICLE': 0,
-                    'PUBLISHED_DATE': 'Not Available'}
+                    'PUBLISHED_DATE': 'N/A'}
         except KeyError:
             data = {'COMPANY_NAME': company,
-                    'SOURCE_TYPE': 'Not Available',
+                    'SOURCE_TYPE': 'N/A',
                     'URL': result['link'],
                     'TITLE': result['title'],
-                    'TEXT_PREVIEW': 'Not Available',
+                    'TEXT_PREVIEW': 'N/A',
                     'LOOKED_AT_TEXT_PREVIEW': 0,
                     'OPENED_ARTICLE': 0,
-                    'PUBLISHED_DATE': 'Not Available'}
+                    'PUBLISHED_DATE': 'N/A'}
     return data
+
+
+def _get_empty_company_row(company):
+    return {'COMPANY_NAME': company,
+            'SOURCE_TYPE': 'N/A',
+            'URL': 'N/A',
+            'TITLE': 'N/A',
+            'TEXT_PREVIEW': 'N/A',
+            'LOOKED_AT_TEXT_PREVIEW': 0,
+            'OPENED_ARTICLE': 0,
+            'PUBLISHED_DATE': 'N/A'}
 
 
 def run_search_across_companies(company_names, search_engine):
@@ -119,6 +127,7 @@ def run_search_across_companies(company_names, search_engine):
     for company in company_names:
         # Loop through the two search queries that must be run for each company
         for query in Query:
+            results_for_query = []
             time.sleep(2)
             full_query = '{} {}'.format(company, query.value)
             # Get all results for specific company search
@@ -126,13 +135,25 @@ def run_search_across_companies(company_names, search_engine):
                 _get_search_results_for_company(company, search_engine_id, search_engine,
                                                 sort=sort_by_date, exactTerms=company, num=5,
                                                 query=full_query)
+
+            # Only format search results if there were search results returned
             if results_for_company is not None:
                 # Loop through result and extract each into a row of the final results df for the company
                 for result in results_for_company:
                     # Extract relevant information from result into nicely formatted record
                     formatted_record = _get_formatted_record_from_results(result, company)
-
                     # Add formatted record to over list of records
-                    results_list.append(formatted_record)
+                    results_for_query.append(formatted_record)
+
+            # Fill in remaining blank records if there were not 5 results returned for the query
+            while len(results_for_query) < 5:
+                blank_record = _get_empty_company_row(company)
+                results_for_query.append(blank_record)
+
+            # Add results for specific query to overall list of results
+            results_list += results_for_query
+            results_df = pd.DataFrame(results_list)
+            results_df.to_csv("Temporary Results.csv", index=False)
+    # Turn results list into final df and return
     results_df = pd.DataFrame(results_list)
     return results_df
