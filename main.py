@@ -8,7 +8,7 @@ from google_custom_search_manager import create_search_engine, run_search_across
 
 
 def main():
-    # Read CSV file with list of companies from drive
+    # # Read CSV file with list of companies from drive
     google = GoogleServicesManager()
     file_id = os.getenv('SEARCH_GROUP')
     file_name = google.download_file_from_drive(file_id)
@@ -31,11 +31,10 @@ def main():
     results_df['DATE_RETRIEVED'] = date_retrieved
 
     # Create csv name based on date
-    csv_name = '{}-{}_{}_outputsheet.csv'.format(date_retrieved_month, date_retrieved_day, file_name)
+    csv_name = '{}-{}_{}_outputsheet.csv'.format(date_retrieved_month, date_retrieved_day, file_name.split('.')[0])
     results_df.to_csv(csv_name, index=False)
 
     # Create google services manager obj to control uploading csvs to Google Drive
-    google = GoogleServicesManager()
     google.upload_file_to_drive(csv_name)
     os.remove(csv_name)
     return

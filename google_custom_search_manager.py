@@ -1,5 +1,6 @@
 import os
 import re
+import time
 from datetime import datetime
 from enum import Enum
 
@@ -25,55 +26,81 @@ def create_search_engine():
 
 def _get_search_results_for_company(company, engine_id, search_engine, query, **kwargs):
     # Submit API request and extract search results from total response
-    query = '{} orders antibody tests for employees'.format(company)
     params = dict(q=query, cx=engine_id, **kwargs)
     response = search_engine.cse().list(**params).execute()
-    search_results = response['items']
-    return search_results
+    try:
+        search_results = response['items']
+        return search_results
+    except KeyError:
+        print('No results for company {}'.format(company))
+        print(response)
+        return
 
 
 def _get_formatted_record_from_results(result, company):
-    # Extract metatags
-    metatags = result['pagemap']['metatags'][0]
-
-    # Extract source type
-    source_type = metatags.get('og:type', 'Not Available')
-
-    # Extract URL
-    url = metatags.get('og:url', result['link'])
-
-    # Extract title
-    title = metatags.get('og:title', result['title'])
-
-    # Extract text preview
-    text_preview = result.get('snippet', 'Not Available')
-
-    # Extract published date
     try:
-        published_date = metatags['article:published_time']
-    except KeyError:
+        # Extract metatags
+        metatags = result['pagemap']['metatags'][0]
+
+        # Extract source type
+        source_type = metatags.get('og:type', 'Not Available')
+
+        # Extract URL
+        url = metatags.get('og:url', result['link'])
+
+        # Extract title
+        title = metatags.get('og:title', result['title'])
+
+        # Extract text preview
+        text_preview = result.get('snippet', 'Not Available')
+
+        # Extract published date
         try:
-            published_date = metatags['datepublished']
+            published_date = metatags['article:published_time']
         except KeyError:
             try:
-                published_date = metatags['date']
+                published_date = metatags['datepublished']
             except KeyError:
-                regex = r"\b[A-Z][a-z]{2}\s[0-9]{1,2},\s[0-9]{4}"
-                result = re.search(regex, text_preview)
-                if result is not None:
-                    published_date = datetime.strptime(result.group(), '%b %d, %Y')
-                else:
-                    published_date = 'Not Available'
+                try:
+                    published_date = metatags['date']
+                except KeyError:
+                    regex = r"\b[A-Z][a-z]{2}\s[0-9]{1,2},\s[0-9]{4}"
+                    result = re.search(regex, text_preview)
+                    if result is not None:
+                        published_date = datetime.strptime(result.group(), '%b %d, %Y')
+                    else:
+                        published_date = 'Not Available'
 
-    # Create dictionary of data for row in df
-    data = {'COMPANY_NAME': company,
-            'SOURCE_TYPE': source_type,
-            'URL': url,
-            'TITLE': title,
-            'TEXT_PREVIEW': text_preview,
-            'LOOKED_AT_TEXT_PREVIEW': 0,
-            'OPENED_ARTICLE': 0,
-            'PUBLISHED_DATE': published_date}
+        # Create dictionary of data for row in df
+        data = {'COMPANY_NAME': company,
+                'SOURCE_TYPE': source_type,
+                'URL': url,
+                'TITLE': title,
+                'TEXT_PREVIEW': text_preview,
+                'LOOKED_AT_TEXT_PREVIEW': 0,
+                'OPENED_ARTICLE': 0,
+                'PUBLISHED_DATE': published_date}
+    except KeyError:
+        try:
+            print(company)
+            print(result)
+            data = {'COMPANY_NAME': company,
+                    'SOURCE_TYPE': 'Not Available',
+                    'URL': result['link'],
+                    'TITLE': result['title'],
+                    'TEXT_PREVIEW': result['snippet'],
+                    'LOOKED_AT_TEXT_PREVIEW': 0,
+                    'OPENED_ARTICLE': 0,
+                    'PUBLISHED_DATE': 'Not Available'}
+        except KeyError:
+            data = {'COMPANY_NAME': company,
+                    'SOURCE_TYPE': 'Not Available',
+                    'URL': result['link'],
+                    'TITLE': result['title'],
+                    'TEXT_PREVIEW': 'Not Available',
+                    'LOOKED_AT_TEXT_PREVIEW': 0,
+                    'OPENED_ARTICLE': 0,
+                    'PUBLISHED_DATE': 'Not Available'}
     return data
 
 
@@ -92,18 +119,20 @@ def run_search_across_companies(company_names, search_engine):
     for company in company_names:
         # Loop through the two search queries that must be run for each company
         for query in Query:
+            time.sleep(2)
             full_query = '{} {}'.format(company, query.value)
             # Get all results for specific company search
             results_for_company =\
                 _get_search_results_for_company(company, search_engine_id, search_engine,
                                                 sort=sort_by_date, exactTerms=company, num=5,
                                                 query=full_query)
-            # Loop through result and extract each into a row of the final results df for the company
-            for result in results_for_company:
-                # Extract relevant information from result into nicely formatted record
-                formatted_record = _get_formatted_record_from_results(result, company)
+            if results_for_company is not None:
+                # Loop through result and extract each into a row of the final results df for the company
+                for result in results_for_company:
+                    # Extract relevant information from result into nicely formatted record
+                    formatted_record = _get_formatted_record_from_results(result, company)
 
-                # Add formatted record to over list of records
-                results_list.append(formatted_record)
+                    # Add formatted record to over list of records
+                    results_list.append(formatted_record)
     results_df = pd.DataFrame(results_list)
     return results_df
