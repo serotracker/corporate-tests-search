@@ -1,6 +1,16 @@
+# Setup
 client_secrets.json
 credentials.txt
+
+# IDEs
 .idea/*
+
+# Virtualenv
 venv/
 
+# Cache
 __pycache__/
+*.pyc
+
+# Log 
+last_run.json
