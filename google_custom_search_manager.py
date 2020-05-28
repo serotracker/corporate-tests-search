@@ -127,7 +127,6 @@ def run_search_across_companies(company_names, search_engine):
     for company in company_names:
         # Loop through the two search queries that must be run for each company
         for query in Query:
-            results_for_query = []
             time.sleep(2)
             full_query = '{} {}'.format(company, query.value)
             # Get all results for specific company search
@@ -143,17 +142,13 @@ def run_search_across_companies(company_names, search_engine):
                     # Extract relevant information from result into nicely formatted record
                     formatted_record = _get_formatted_record_from_results(result, company)
                     # Add formatted record to over list of records
-                    results_for_query.append(formatted_record)
+                    results_list.append(formatted_record)
+        results_df = pd.DataFrame(results_list)
+        results_df.to_csv("Temporary Results.csv", index=False)
 
-            # Fill in remaining blank records if there were not 5 results returned for the query
-            while len(results_for_query) < 5:
-                blank_record = _get_empty_company_row(company)
-                results_for_query.append(blank_record)
-
-            # Add results for specific query to overall list of results
-            results_list += results_for_query
-            results_df = pd.DataFrame(results_list)
-            results_df.to_csv("Temporary Results.csv", index=False)
-    # Turn results list into final df and return
+    # Turn results list into final df
     results_df = pd.DataFrame(results_list)
+
+    # Remove any duplicates based on URL column and return results
+    results_df = results_df.drop_duplicates(subset='URL', keep="first")
     return results_df
