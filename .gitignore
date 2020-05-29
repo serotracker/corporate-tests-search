@@ -11,6 +11,3 @@ venv/
 # Cache
 __pycache__/
 *.pyc
-
-# Log 
-last_run.json

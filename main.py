@@ -1,10 +1,10 @@
 import os
-from datetime import datetime, timedelta
+from datetime import datetime
 
 import pandas as pd
 
-from google_services_manager import GoogleServicesManager
-from google_custom_search_manager import create_search_engine, run_search_across_companies
+from google_apis.google_services_manager import GoogleServicesManager
+from google_apis.google_custom_search_manager import create_search_engine, run_search_across_companies
 from utils.search_group_handler import get_search_group
 
 
