@@ -1,42 +1,20 @@
-import dateutil.parser as parser
 import os
 from datetime import datetime, timedelta
 
-import json
 import pandas as pd
 
 from google_services_manager import GoogleServicesManager
 from google_custom_search_manager import create_search_engine, run_search_across_companies
-
-
-def check_last_run_time():
-    # Load from json file
-    with open('last_run.json', 'r') as fi:
-        lr = json.load(fi)
-
-    search_group = os.getenv('SEARCH_GROUP')
-    last_run = parser.parse(lr[search_group]) 
-    delta = datetime.now() - last_run
-
-    # Quit if timedelta less than 70 hours
-    if delta < timedelta(hours=70):
-        print(f"Quitting: Search for {search_group} was run {delta} hours ago.")
-        exit(0)
-
-    # Output current time to file
-    lr[search_group] = str(datetime.now())
-    with open('last_run.json','w') as fe:
-        json.dump(lr, fe)
+from utils.search_group_handler import get_search_group
 
 
 def main():
-    # Check last run time; quit accordingly
-    check_last_run_time()
+    # Get search group that script should be executed on
+    search_group = get_search_group()
 
     # Read CSV file with list of companies from drive
     google = GoogleServicesManager()
-    file_id = os.getenv('SEARCH_GROUP')
-    file_name = google.download_file_from_drive(file_id)
+    file_name = google.download_file_from_drive(search_group)
     input_df = pd.read_csv(file_name)
 
     # Extract list of companies and delete locally saved csv

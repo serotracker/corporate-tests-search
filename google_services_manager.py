@@ -44,9 +44,8 @@ class GoogleServicesManager():
             print(e)
         return
 
-    def download_file_from_drive(self, file_id):
+    def download_file_from_drive(self, group):
         try:
-            group = os.getenv('SEARCH_GROUP')
             file_id = input_file_id[group]
             file = self.drive_client.CreateFile({'id': file_id})
             file_name = '{}.csv'.format(file['title'])
