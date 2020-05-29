@@ -1,17 +1,20 @@
 import os
-from datetime import datetime
+from datetime import datetime, timedelta
 
 import pandas as pd
 
 from google_services_manager import GoogleServicesManager
 from google_custom_search_manager import create_search_engine, run_search_across_companies
+from utils.search_group_handler import get_search_group
 
 
 def main():
+    # Get search group that script should be executed on
+    search_group = get_search_group()
+
     # Read CSV file with list of companies from drive
     google = GoogleServicesManager()
-    file_id = os.getenv('SEARCH_GROUP')
-    file_name = google.download_file_from_drive(file_id)
+    file_name = google.download_file_from_drive(search_group)
     input_df = pd.read_csv(file_name)
 
     # Extract list of companies and delete locally saved csv
