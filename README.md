@@ -11,8 +11,3 @@ Search engine for scraping data about covid tests ordered by companies for emplo
 - CSE_ID = the ID of the customized search engine
 - CUSTOM_SEARCH_API_KEY = the custom search API key
 7. Run the script `python main.py`. The program will prompt you to sign in with a google account, make sure you use an account that has access to the COVID drive (specifically the data team folder) 
-8. Check to see if one CSV per company in the `Dummy test.csv` file  was successfully uploaded to the `Corporate Tests Search Results` folder within the data team folder
-
-# TODO
-- Implement error handling if there are no search results retrieved ('items' key doesn't exist)
-- Fix ugly try catch sequence
