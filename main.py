@@ -31,11 +31,13 @@ def main():
     date_retrieved = datetime.now()
     date_retrieved_day = date_retrieved.day
     date_retrieved_month = date_retrieved.month
-    results_df['DATE_RETRIEVED'] = date_retrieved
+    results_df['DATE_RETRIEVED'] = date_retrieved.date()
 
     # Create csv name based on date
-    csv_name = '{:02d}-{:02d}_{}_TEST_outputsheet.csv'.format(date_retrieved_month,
-                                                              date_retrieved_day, file_name.split('.')[0])
+    csv_name = '{:02d}-{:02d}_{}_outputsheet.csv'.format(date_retrieved_month,
+                                                         date_retrieved_day,
+                                                         file_name.split('.')[0])
+
     results_df.to_csv(csv_name, index=False)
 
     # Create google services manager obj to control uploading csvs to Google Drive
