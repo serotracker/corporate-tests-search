@@ -6,6 +6,7 @@ import pandas as pd
 from google_apis.google_services_manager import GoogleServicesManager
 from google_apis.google_custom_search_manager import create_search_engine, run_search_across_companies
 from utils.search_group_handler import get_search_group
+from utils.results_pruner import prune_results
 
 
 def main():
@@ -26,6 +27,9 @@ def main():
 
     # Run search on all companies and get one df of all search results
     results_df = run_search_across_companies(companies, custom_search)
+
+    # Process the entire results df by removing blacklist results and internal duplicates
+    results_df = prune_results(results_df)
 
     # Set date retrieved column to be current datetime
     date_retrieved = datetime.now()

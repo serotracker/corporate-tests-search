@@ -5,7 +5,7 @@ from enum import Enum
 import pandas as pd
 
 from googleapiclient.discovery import build
-from utils.results_formatter import get_formatted_record_from_results
+from utils.individual_record_formatter import get_formatted_record_from_results
 
 
 class Query(Enum):
@@ -71,7 +71,4 @@ def run_search_across_companies(company_names, search_engine):
 
     # Turn results list into final df
     results_df = pd.DataFrame(results_list)
-
-    # Remove any duplicates based on URL column and return results
-    results_df = results_df.drop_duplicates(subset='URL', keep="first")
     return results_df
