@@ -1,5 +1,6 @@
 import os
 import json
+
 from datetime import datetime
 
 import pandas as pd
@@ -8,6 +9,7 @@ from google_apis.google_services_manager import GoogleServicesManager
 from google_apis.google_custom_search_manager import create_search_engine, run_search_across_companies
 from utils.search_group_handler import get_input_file_id
 from utils.results_pruner import prune_results
+from utils.email_handler import send_email_complete
 
 
 def main():
@@ -58,6 +60,9 @@ def main():
     folder_id = google_folder_ids['output_folder_id']
     google.upload_file_to_drive(csv_name, folder_id)
     os.remove(csv_name)
+
+    # Send email
+    send_email_complete()
     return
 
 
