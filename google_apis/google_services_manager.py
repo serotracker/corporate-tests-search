@@ -1,18 +1,15 @@
 import os
 
+import pandas as pd
+
 from pydrive.auth import GoogleAuth
 from pydrive.drive import GoogleDrive
 
-input_file_id = {'A': '1hIxFbICy_1mjlhcpvce8ULWaEkm3EkjKly59Q76woaI',
-                 'B': '1lbn2JXymi_1d_cPy424qFHLaspqzYpANU4kcArBdRjw',
-                 'C': '1nJqAGw9P9ipu8GPBNB3ow-gAGleQtM2_65mGgjBvb0U'}
 
-OUTPUT_FOLDER_ID = '1X6E0jMigQCSll0rxIlKFWdZ7b-FTNH9z'
-
-
-class GoogleServicesManager():
+class GoogleServicesManager:
     def __init__(self):
         self.gauth = GoogleAuth()
+        self.gauth.DEFAULT_SETTINGS['oauth_scope'] = ['https://www.googleapis.com/auth/drive']
         # Authenticate the user
         self.authenticate()
         # Initialize google clients
@@ -35,22 +32,34 @@ class GoogleServicesManager():
         self.gauth.SaveCredentialsFile("credentials.txt")
         return
 
-    def upload_file_to_drive(self, local_file_path, drive_folder_id=OUTPUT_FOLDER_ID):
+    def upload_file_to_drive(self, local_file_path, drive_folder_id):
         try:
-            file = self.drive_client.CreateFile({'parents': [{'id': drive_folder_id}]})
+            file_title = local_file_path.split('.')[0]
+            file = self.drive_client.CreateFile({'title': file_title,
+                                                 "mimeType": "text/csv",
+                                                 'parents': [{'id': drive_folder_id}]})
             file.SetContentFile(local_file_path)
-            file.Upload()
+            file.Upload({"convert": True})
         except Exception as e:
             print(e)
         return
 
-    def download_file_from_drive(self, group):
+    def download_file_from_drive(self, drive_file_id, return_df=True, remove=False):
+        # Download file from google drive with specified file id
         try:
-            file_id = input_file_id[group]
-            file = self.drive_client.CreateFile({'id': file_id})
+            file = self.drive_client.CreateFile({'id': drive_file_id})
             file_name = '{}.csv'.format(file['title'])
             file.GetContentFile(file_name, mimetype='text/csv')
-            return file_name
+            if remove:
+                file.Delete()
+            # If set to true, read file as df and return df and delete file
+            if return_df:
+                df = pd.read_csv(file_name)
+                os.remove(file_name)
+                return df, file['title']
+            # Otherwise return name of file saved locally
+            else:
+                return file_name
         except Exception as e:
             print(e)
             return

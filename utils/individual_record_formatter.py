@@ -31,7 +31,7 @@ def _get_published_date(meta, snippet):
 
     # If published_date is set, truncate everything after the date part to just keep yyyy-mm-dd
     if published_date != 'N/A':
-        published_date = str(published_date)[:11]
+        published_date = str(published_date)[:10]
     return published_date
 
 
