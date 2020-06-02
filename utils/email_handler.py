@@ -26,3 +26,6 @@ def send_email_complete():
         msg['From'] = sender
         msg['To'] = ", ".join(recipients)
         server.sendmail(sender, recipients, msg.as_string())
+
+    return
+
