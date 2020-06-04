@@ -27,7 +27,8 @@ def _get_master_output_sheet(google, id_dict):
         return res[0]
     # If the file id was not found, throw a value error
     else:
-        raise ValueError('Could not find a file id for the master output sheet.')
+        print('Could not find a file id for the master output sheet.')
+        exit()
 
 
 def _remove_duplicates_in_master(results, master):
@@ -43,11 +44,16 @@ def prune_results(df, google, id_dict):
 
     # Remove any results whose text preview contains blacklisted phrases
     df = _remove_blacklisted_phrases(df)
+    df.to_csv("Search Results.csv", index=False)
+    print('Dropped internal duplicates and removed blacklisted phrases.')
 
     # Download master df from drive
     master_df = _get_master_output_sheet(google, id_dict)
 
     # Compare results df to master and remove any duplicates
     df = _remove_duplicates_in_master(df, master_df)
+    print('Removed duplicates from master df.')
 
+    # Save results df locally after all pruning
+    df.to_csv("Search Results.csv", index=False)
     return df, master_df

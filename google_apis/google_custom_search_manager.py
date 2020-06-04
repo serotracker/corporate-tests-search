@@ -67,7 +67,7 @@ def run_search_across_companies(company_names, search_engine):
                     # Add formatted record to over list of records
                     results_list.append(formatted_record)
         results_df = pd.DataFrame(results_list)
-        results_df.to_csv("Temporary Results.csv", index=False)
+        results_df.to_csv("Search Results.csv", index=False)
 
     # Turn results list into final df
     results_df = pd.DataFrame(results_list)
