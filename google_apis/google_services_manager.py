@@ -56,7 +56,7 @@ class GoogleServicesManager:
                 file.Delete()
             # If set to true, read file as df and return df and delete file
             if return_df:
-                df = pd.read_csv(file_name)
+                df = pd.read_csv(file_name, na_filter=False)
                 os.remove(file_name)
                 return df, file['title']
             # Otherwise return name of file saved locally
