@@ -44,8 +44,8 @@ def prune_results(df, google, id_dict):
 
     # Remove any results whose text preview contains blacklisted phrases
     df = _remove_blacklisted_phrases(df)
-    df.to_csv("Search Results.csv", index=False)
     print('Dropped internal duplicates and removed blacklisted phrases.')
+    df.to_csv("Search Results.csv", index=False)
 
     # Download master df from drive
     master_df = _get_master_output_sheet(google, id_dict)
