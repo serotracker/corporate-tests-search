@@ -6,6 +6,7 @@ import pandas as pd
 
 from google_apis.google_services_manager import GoogleServicesManager
 from google_apis.google_custom_search_manager import create_search_engine, run_search_across_companies
+from google_apis.exponential_backoff import apply_exponential_backoff_to_file_upload
 from utils.search_group_handler import get_input_file_id
 from utils.results_pruner import prune_results
 
@@ -42,10 +43,17 @@ def main():
 
     # Update master by adding new unique records and upload to drive
     master_df = pd.concat([master_df, results_df], ignore_index=True)
-    csv_name = 'masteroutput.csv'
-    master_df.to_csv(csv_name, index=False)
+    master_csv_name = 'masteroutput.csv'
+    master_df.to_csv(master_csv_name, index=False)
     folder_id = google_folder_ids['master_output_folder_id']
-    google.upload_file_to_drive(csv_name, folder_id)
+    upload_successful = google.upload_file_to_drive(master_csv_name, folder_id)
+
+    # Apply expontential backoff if uploading file to drive fails
+    if not upload_successful:
+        apply_exponential_backoff_to_file_upload(google, master_csv_name, folder_id)
+
+    # Remove master csv name once upload is complete
+    os.remove(master_csv_name)
 
     # Create csv name based on date
     csv_name = '{:02d}{:02d}_{}_outputsheet.csv'.format(date_retrieved_month,
@@ -56,7 +64,11 @@ def main():
 
     # Create google services manager obj to control uploading csvs to Google Drive
     folder_id = google_folder_ids['output_folder_id']
-    google.upload_file_to_drive(csv_name, folder_id)
+    upload_successful = google.upload_file_to_drive(csv_name, folder_id)
+    if not upload_successful:
+        apply_exponential_backoff_to_file_upload(google, csv_name, folder_id)
+
+    # Remove csv of output sheet
     os.remove(csv_name)
     return
 

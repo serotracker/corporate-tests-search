@@ -40,9 +40,11 @@ class GoogleServicesManager:
                                                  'parents': [{'id': drive_folder_id}]})
             file.SetContentFile(local_file_path)
             file.Upload({"convert": True})
+            successful_upload = True
         except Exception as e:
             print(e)
-        return
+            successful_upload = False
+        return successful_upload
 
     def download_file_from_drive(self, drive_file_id, return_df=True, remove=False):
         # Download file from google drive with specified file id
