@@ -10,7 +10,7 @@ from .search_group_handler import get_search_group
 port = 465
 context = ssl.create_default_context()
 sender = 'iitbackendalerts@gmail.com'
-recipients = ['can.serosurveillance.dev@gmail.com']  # Add additional email addresses here
+recipients = ['abeljohnjoseph@gmail.com', 'can.serosurveillance.dev@gmail.com']  # Add additional email addresses here
 password = os.getenv('GMAIL_PASS')
 
 
