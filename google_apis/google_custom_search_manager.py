@@ -48,6 +48,7 @@ def run_search_across_companies(company_names, search_engine):
     # Loop through companies and create results output for each company
     results_list = []
     for company in company_names:
+        print(company)
         # Loop through the two search queries that must be run for each company
         for query in Query:
             time.sleep(2)
