@@ -47,8 +47,10 @@ def run_search_across_companies(company_names, search_engine):
 
     # Loop through companies and create results output for each company
     results_list = []
+    num_companies = len(company_names)
+    i = 1
     for company in company_names:
-        print(company)
+        print(company, ' {} out of {}'.format(i, num_companies))
         # Loop through the two search queries that must be run for each company
         for query in Query:
             time.sleep(2)
@@ -69,6 +71,7 @@ def run_search_across_companies(company_names, search_engine):
                     results_list.append(formatted_record)
         results_df = pd.DataFrame(results_list)
         results_df.to_csv("Search Results.csv", index=False)
+        i += 1
 
     # Turn results list into final df
     results_df = pd.DataFrame(results_list)
