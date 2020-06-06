@@ -8,7 +8,7 @@ import pandas as pd
 from google_apis.google_services_manager import GoogleServicesManager
 from google_apis.google_custom_search_manager import create_search_engine, run_search_across_companies
 from google_apis.exponential_backoff import apply_exponential_backoff_to_file_upload
-from utils.search_group_handler import get_input_file_id
+from utils.search_group_handler import get_input_file_id_and_search_group
 from utils.results_pruner import prune_results
 from utils.email_handler import send_email_complete
 
@@ -19,7 +19,7 @@ def main():
         google_folder_ids = json.load(f)
 
     # Get search group that script should be executed on
-    search_group_file_id = get_input_file_id(google_folder_ids)
+    search_group_file_id, search_group = get_input_file_id_and_search_group(google_folder_ids)
 
     # Read CSV file with list of companies from drive
     google = GoogleServicesManager()
@@ -76,7 +76,7 @@ def main():
     os.remove(csv_name)
 
     # Send email
-    send_email_complete()
+    send_email_complete(search_group)
     return
 
 

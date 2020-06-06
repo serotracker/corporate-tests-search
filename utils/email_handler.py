@@ -3,8 +3,6 @@ import smtplib
 import ssl
 from email.mime.text import MIMEText
 
-from .search_group_handler import get_search_group
-
 
 # SMTP setup
 port = 465
@@ -14,9 +12,8 @@ recipients = ['abeljohnjoseph@gmail.com', 'can.serosurveillance.dev@gmail.com'] 
 password = os.getenv('GMAIL_PASS')
 
 
-def send_email_complete():
+def send_email_complete(search_group):
     # Configure the full email body
-    search_group = get_search_group()
     body = f"Hello,\n\nThe search for Group {search_group} has completed.\n\nSincerely,\nServer Alerts"
     with smtplib.SMTP_SSL('smtp.gmail.com', port, context=context) as server:
         server.login(sender, password)

@@ -2,7 +2,7 @@ import json
 from datetime import datetime
 
 
-def get_search_group():
+def _get_search_group():
     # Load json file with last script run times per group
     with open('json_library/last_run.json', 'r') as f:
         last_run_dict = json.load(f)
@@ -26,12 +26,12 @@ def get_search_group():
     return search_group
 
 
-def get_input_file_id(id_dict):
+def get_input_file_id_and_search_group(id_dict):
     # Get search group A, B or C
-    search_group = get_search_group()
+    search_group = _get_search_group()
 
     # Get file id corresponding to search group
     file_id = id_dict['search_groups_file_id'][search_group]
-    return file_id
+    return [file_id, search_group]
 
 
