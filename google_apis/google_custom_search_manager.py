@@ -1,4 +1,5 @@
 import os
+import sys
 import time
 from enum import Enum
 
@@ -32,6 +33,7 @@ def _get_search_results_for_company(company, engine_id, search_engine, query, **
         return search_results
     except KeyError:
         print('No results for company {}'.format(company))
+        sys.stdout.flush()
         return
 
 
@@ -51,6 +53,7 @@ def run_search_across_companies(company_names, search_engine):
     i = 1
     for company in company_names:
         print(company, ' {} out of {}'.format(i, num_companies))
+        sys.stdout.flush()
         # Loop through the two search queries that must be run for each company
         for query in Query:
             time.sleep(2)
