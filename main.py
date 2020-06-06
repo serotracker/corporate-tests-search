@@ -61,7 +61,7 @@ def main():
     # Create csv name based on date
     csv_name = '{:02d}{:02d}_{}_outputsheet.csv'.format(date_retrieved_month,
                                                         date_retrieved_day,
-                                                        'GROUP_C')
+                                                        file_title)
 
     results_df.to_csv(csv_name, index=False)
 
