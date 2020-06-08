@@ -1,5 +1,5 @@
 # corporate-tests-search
-Search engine for scraping data about covid tests ordered by companies for employees
+Search engine for scraping data about COVID tests ordered by companies for employees
 
 # How to run
 1. Download client secrets json file from the google cloud console (https://console.cloud.google.com/apis/credentials/oauthclient/702218053502-fcrju4976lt0p1dntbln2qdolo72qjki.apps.googleusercontent.com?authuser=1&project=covid-corporate--1589232879130)
