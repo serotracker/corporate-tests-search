@@ -11,3 +11,6 @@ venv/
 # Cache
 __pycache__/
 *.pyc
+
+# Search Results
+Search\ Results.csv
