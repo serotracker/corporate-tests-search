@@ -55,9 +55,6 @@ def main():
         apply_exponential_backoff_to_file_upload(google, master_csv_name, folder_id)
     print('Uploaded new masteroutput sheet to drive.')
 
-    # Remove master csv name once upload is complete
-    os.remove(master_csv_name)
-
     # Create csv name based on date
     csv_name = '{:02d}{:02d}_{}_outputsheet.csv'.format(date_retrieved_month,
                                                         date_retrieved_day,
@@ -71,9 +68,6 @@ def main():
     if not upload_successful:
         apply_exponential_backoff_to_file_upload(google, csv_name, folder_id)
     print('Uploaded new results sheet to drive.')
-
-    # Remove csv of output sheet
-    os.remove(csv_name)
 
     # Send email
     send_email_complete(search_group)
