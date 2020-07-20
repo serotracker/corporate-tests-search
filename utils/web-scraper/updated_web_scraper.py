@@ -43,4 +43,4 @@ def process_csv_results(csv_file, write_to_csv=True):
                     scrape_result = row[4]
                 name_in_scrape = company_name in scrape_result
                 print(name_in_scrape, company_name)
-                return(name_in_scrape)
+                return name_in_scrape
