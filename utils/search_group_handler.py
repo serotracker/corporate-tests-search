@@ -13,8 +13,8 @@ def _get_search_group():
     # Get search group with largest time delta from current time
     search_group = ''
     max_time_delta = 0
-    for group in last_run_dict.keys():
-        delta = (current - datetime.strptime(last_run_dict[group], '%Y-%m-%d %H:%M:%S.%f')).days
+    for group, last_run_time in last_run_dict.items():
+        delta = (current - datetime.strptime(last_run_time, '%Y-%m-%d %H:%M:%S.%f')).total_seconds()
         if delta > max_time_delta:
             max_time_delta = delta
             search_group = group
