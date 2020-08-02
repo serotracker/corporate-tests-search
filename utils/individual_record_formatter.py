@@ -61,8 +61,9 @@ def get_formatted_record_from_results(result, company):
                 'URL': url,
                 'TITLE': title,
                 'TEXT_PREVIEW': text_preview,
-                'LOOKED_AT_TEXT_PREVIEW': 0,
                 'OPENED_ARTICLE': 0,
+                'COMPANY_NAME_IN_TEXT': 0,
+                'IS_ARTICLE_GOOD': 0,
                 'PUBLISHED_DATE': published_date}
     except KeyError:
         # If the metatags key did not exist in results, try setting fields other ways
@@ -72,8 +73,9 @@ def get_formatted_record_from_results(result, company):
                     'URL': result['link'],
                     'TITLE': result['title'],
                     'TEXT_PREVIEW': result['snippet'],
-                    'LOOKED_AT_TEXT_PREVIEW': 0,
                     'OPENED_ARTICLE': 0,
+                    'COMPANY_NAME_IN_TEXT': 0,
+                    'IS_ARTICLE_GOOD': 0,
                     'PUBLISHED_DATE': 'N/A'}
         except KeyError:
             data = {'COMPANY_NAME': company,
@@ -81,7 +83,8 @@ def get_formatted_record_from_results(result, company):
                     'URL': result['link'],
                     'TITLE': result['title'],
                     'TEXT_PREVIEW': 'N/A',
-                    'LOOKED_AT_TEXT_PREVIEW': 0,
                     'OPENED_ARTICLE': 0,
+                    'COMPANY_NAME_IN_TEXT': 0,
+                    'IS_ARTICLE_GOOD': 0,
                     'PUBLISHED_DATE': 'N/A'}
     return data
