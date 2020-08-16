@@ -34,7 +34,7 @@ def main():
     results_df = run_search_across_companies(companies, custom_search)
 
     # Process the entire results df by removing blacklist results and internal duplicates
-    results_df, master_df = prune_results(results_df, google, google_folder_ids)
+    results_df, master_df = prune_results(results_df)
 
     # Set date retrieved column to be current datetime
     date_retrieved = datetime.now()
@@ -42,17 +42,9 @@ def main():
     date_retrieved_month = date_retrieved.month
     results_df['DATE_RETRIEVED'] = date_retrieved.date()
 
-    # Update master by adding new unique records and upload to drive
+    # Update master by adding new unique records and save locally
     master_df = pd.concat([master_df, results_df], ignore_index=True)
-    master_csv_name = 'masteroutput.csv'
-    master_df.to_csv(master_csv_name, index=False)
-    folder_id = google_folder_ids['master_output_folder_id']
-    upload_successful = google.upload_file_to_drive(master_csv_name, folder_id)
-
-    # Apply expontential backoff if uploading file to drive fails
-    if not upload_successful:
-        apply_exponential_backoff_to_file_upload(google, master_csv_name, folder_id)
-    print('Uploaded new masteroutput sheet to drive.')
+    master_df.to_csv('masteroutput.csv', index=False)
 
     # Create csv name based on date
     csv_name = '{:02d}{:02d}_{}_outputsheet.csv'.format(date_retrieved_month,
