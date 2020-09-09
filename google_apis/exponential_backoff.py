@@ -19,8 +19,8 @@ def apply_exponential_backoff_to_google_search(engine, query_params):
     # Retry google search with query if 503 HttpError is returned
     http_error = True
     i = 0
-    while http_error:
-        wait_time = 2 ** i
+    wait_time = 2 ** i
+    while http_error and wait_time <= 10:
         time.sleep(wait_time)
         try:
             response = engine.cse().list(**query_params).execute()
