@@ -20,7 +20,7 @@ def apply_exponential_backoff_to_google_search(engine, query_params):
     http_error = True
     i = 0
     wait_time = 2 ** i
-    while http_error and wait_time <= 10:
+    while http_error and i <= 10:
         time.sleep(wait_time)
         try:
             response = engine.cse().list(**query_params).execute()
