@@ -6,7 +6,9 @@ from enum import Enum
 import pandas as pd
 
 from googleapiclient.discovery import build
+from googleapiclient.errors import HttpError
 from utils.individual_record_formatter import get_formatted_record_from_results
+from google_apis.exponential_backoff import apply_exponential_backoff_to_google_search
 
 
 class Query(Enum):
@@ -27,7 +29,10 @@ def create_search_engine():
 def _get_search_results_for_company(company, engine_id, search_engine, query, **kwargs):
     # Submit API request and extract search results from total response
     params = dict(q=query, cx=engine_id, **kwargs)
-    response = search_engine.cse().list(**params).execute()
+    try:
+        response = search_engine.cse().list(**params).execute()
+    except HttpError:
+        response = apply_exponential_backoff_to_google_search(search_engine, params)
     try:
         search_results = response['items']
         return search_results
