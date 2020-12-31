@@ -12,8 +12,8 @@ from google_apis.exponential_backoff import apply_exponential_backoff_to_google_
 
 
 class Query(Enum):
-    ANTIBODY_BLOOD_TEST = 'orders antibody blood tests for employees'
-    CONDUCT_COVID_TEST = 'conducting COVID tests on employees'
+    ANTIBODY_BLOOD_TEST = 'performing antibody blood tests on employees'
+    CONDUCT_COVID_TEST = 'performing rapid COVID-19 tests on employees'
 
 
 def create_search_engine():
