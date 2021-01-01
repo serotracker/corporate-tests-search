@@ -50,13 +50,13 @@ class GoogleServicesManager:
         # Download file from google drive with specified file id
         try:
             file = self.drive_client.CreateFile({'id': drive_file_id})
-            file_name = '{}.csv'.format(file['title'])
+            file_name = file['title']
             file.GetContentFile(file_name, mimetype='text/csv')
             if remove:
                 file.Delete()
             # If set to true, read file as df and return df and delete file
             if return_df:
-                df = pd.read_csv(file_name, na_filter=False)
+                df = pd.read_csv(file_name, na_filter=False, encoding='ISO-8859-1')
                 os.remove(file_name)
                 return df, file['title']
             # Otherwise return name of file saved locally
