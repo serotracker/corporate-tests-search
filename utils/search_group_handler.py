@@ -27,11 +27,9 @@ def _get_search_group():
 
 
 def get_input_file_id_and_search_group(id_dict):
-    # Get search group A, B or C
+    # Get search group A, B, C, or D
     search_group = _get_search_group()
 
     # Get file id corresponding to search group
     file_id = id_dict['search_groups_file_id'][search_group]
     return [file_id, search_group]
-
-
