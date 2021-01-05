@@ -36,7 +36,6 @@ def _get_published_date(meta, snippet):
 
 
 def get_formatted_record_from_results(result, company):
-    print(result)
     try:
         # Extract metatags
         metatags = result['pagemap']['metatags'][0]
@@ -79,13 +78,17 @@ def get_formatted_record_from_results(result, company):
                     'IS_ARTICLE_GOOD': 0,
                     'PUBLISHED_DATE': 'N/A'}
         except KeyError:
-            data = {'COMPANY_NAME': company,
-                    'SOURCE_TYPE': 'N/A',
-                    'URL': result['link'],
-                    'TITLE': result['title'],
-                    'TEXT_PREVIEW': 'N/A',
-                    'OPENED_ARTICLE': 0,
-                    'COMPANY_NAME_IN_TEXT': 0,
-                    'IS_ARTICLE_GOOD': 0,
-                    'PUBLISHED_DATE': 'N/A'}
+            # If still no results, just return empty dict
+            try:
+                data = {'COMPANY_NAME': company,
+                        'SOURCE_TYPE': 'N/A',
+                        'URL': result['link'],
+                        'TITLE': result['title'],
+                        'TEXT_PREVIEW': 'N/A',
+                        'OPENED_ARTICLE': 0,
+                        'COMPANY_NAME_IN_TEXT': 0,
+                        'IS_ARTICLE_GOOD': 0,
+                        'PUBLISHED_DATE': 'N/A'}
+            except KeyError:
+                data = {}
     return data
