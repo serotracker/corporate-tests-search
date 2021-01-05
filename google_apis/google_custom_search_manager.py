@@ -75,8 +75,9 @@ def run_search_across_companies(company_names, search_engine):
                 for result in results_for_company:
                     # Extract relevant information from result into nicely formatted record
                     formatted_record = get_formatted_record_from_results(result, company)
-                    # Add formatted record to over list of records
-                    results_list.append(formatted_record)
+                    # Add formatted record to list of records if record is valid
+                    if formatted_record:
+                        results_list.append(formatted_record)
         results_df = pd.DataFrame(results_list)
         results_df.to_csv("Search Results.csv", index=False)
         i += 1
