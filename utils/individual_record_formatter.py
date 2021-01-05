@@ -36,6 +36,7 @@ def _get_published_date(meta, snippet):
 
 
 def get_formatted_record_from_results(result, company):
+    print(result)
     try:
         # Extract metatags
         metatags = result['pagemap']['metatags'][0]
