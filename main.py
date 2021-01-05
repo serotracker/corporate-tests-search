@@ -25,8 +25,7 @@ def main():
     input_df, file_title = google.download_file_from_drive(search_group_file_id, return_df=True)
 
     # Extract list of companies
-    #companies = input_df['COMPANIES'].tolist()
-    companies = ['Globex Mining Enterprises']
+    companies = input_df['COMPANIES'].tolist()
 
     # Get custom search engine instance
     custom_search = create_search_engine()
