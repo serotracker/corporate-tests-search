@@ -11,3 +11,7 @@ Search engine for scraping data about COVID tests ordered by companies for emplo
 - CSE_ID = the ID of the customized search engine
 - CUSTOM_SEARCH_API_KEY = the custom search API key
 7. Run the script `python main.py`. The program will prompt you to sign in with a google account, make sure you use an account that has access to the COVID drive (specifically the data team folder) 
+
+--- 
+## Infrastructure Documentation
+Refer to the [`corporate_search.sh` documentation](https://github.com/serotracker/scripts/blob/master/README.md#corporate_searchsh) in the `scripts` repo.
